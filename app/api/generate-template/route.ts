@@ -38,11 +38,50 @@ export async function POST(req: Request) {
       },
     }
 
-    // Create a serialized version of userData to pass through URL
-    const userDataParam = encodeURIComponent(JSON.stringify(sanitizedUserData))
+    // Generate a unique session ID for this download
+    const sessionId = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15)
+    
+    // Store the data in global.sessionStorage (you might want to use Redis in production)
+    if (!global.sessionStorage) {
+      const storage: SessionStorage = {
+        data: new Map<string, SessionData>(),
+        get(key: string) {
+          return this.data.get(key);
+        },
+        set(key: string, value: SessionData) {
+          this.data.set(key, value);
+        },
+        has(key: string) {
+          return this.data.has(key);
+        },
+        delete(key: string) {
+          return this.data.delete(key);
+        },
+        // Storage interface implementation
+        length: 0,
+        clear() {
+          this.data.clear();
+        },
+        getItem(key: string) {
+          return null;
+        },
+        key(index: number) {
+          return null;
+        },
+        removeItem(key: string) {},
+        setItem(key: string, value: string) {}
+      };
+      global.sessionStorage = storage;
+    }
+    global.sessionStorage.set(sessionId, { userData: sanitizedUserData, templateType })
 
-    // Generate download URL with both template type and user data
-    const downloadUrl = `/api/download?template=${templateType}&userData=${userDataParam}`
+    // Generate download URL with session ID
+    const downloadUrl = `/api/download?sessionId=${sessionId}`
+
+    // Set expiry for session data (5 minutes)
+    setTimeout(() => {
+      global.sessionStorage.delete(sessionId)
+    }, 5 * 60 * 1000)
 
     // Simulate generation delay
     await new Promise((resolve) => setTimeout(resolve, 1500))

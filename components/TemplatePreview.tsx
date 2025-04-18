@@ -22,10 +22,8 @@ export default function TemplatePreview({ userData, templateType }: TemplatePrev
 
   const renderTemplate = () => {
     switch (templateType) {
-      case "minimal":
+      case "minimal":  // 注意这里的命名
         return <MinimalTemplate userData={userData} />
-      case "business":
-        return <BusinessTemplate userData={userData} />
       case "creative":
         return <CreativeTemplate userData={userData} />
       case "fun":

@@ -22,34 +22,18 @@ import { generateFunTemplate } from "@/lib/generators/templates/fun-generator"
 export async function GET(req: Request) {
   try {
     const { searchParams } = new URL(req.url)
-    const templateType = searchParams.get("template") || "minimalist"
-    const userDataParam = searchParams.get("userData")
-
-    // Parse user data from URL parameter
-    let userData = {}
-    try {
-      if (userDataParam) {
-        userData = JSON.parse(decodeURIComponent(userDataParam))
-        console.log("Successfully parsed user data:", Object.keys(userData))
-      } else {
-        console.warn("No user data parameter provided")
-      }
-    } catch (e) {
-      console.error("Error parsing user data:", e)
-      // Fallback to default data if parsing fails
-      userData = {
-        name: "Your Name",
-        email: "your.email@example.com",
-        phone: "",
-        wechat: "",
-        bio: "Your bio goes here",
-        profession: "Your Profession",
-        location: "",
-        avatar: "",
-        projects: [],
-        socialLinks: {},
-      }
+    const sessionId = searchParams.get("sessionId")
+    
+    if (!sessionId || !global.sessionStorage?.has(sessionId)) {
+      return new NextResponse("Invalid or expired download session", { status: 400 })
     }
+
+    // Get data from session storage
+    const sessionData = global.sessionStorage.get(sessionId)
+    const { userData, templateType } = sessionData
+
+    // Delete session data after retrieval
+    global.sessionStorage.delete(sessionId)
 
     // Create a new JSZip instance
     const zip = new JSZip()
@@ -64,22 +48,27 @@ export async function GET(req: Request) {
 
     // Add app directory structure
     const appDir = zip.folder("app")
+    if (!appDir) throw new Error("Failed to create app directory")
     appDir.file("globals.css", generateGlobalCss())
     appDir.file("layout.tsx", generateRootLayout())
     appDir.file("page.tsx", generateMainPage(templateType))
 
     // Add components directory
     const componentsDir = zip.folder("components")
+    if (!componentsDir) throw new Error("Failed to create components directory")
     componentsDir.file("theme-provider.tsx", generateThemeProvider())
     componentsDir.file("theme-toggle.tsx", generateThemeToggle())
 
     // Add user data file
     const dataDir = zip.folder("data")
+    if (!dataDir) throw new Error("Failed to create data directory")
     dataDir.file("user-data.ts", generateUserDataFile(userData, templateType))
 
     // Add public directory for images
     const publicDir = zip.folder("public")
+    if (!publicDir) throw new Error("Failed to create public directory")
     const imagesDir = publicDir.folder("images")
+    if (!imagesDir) throw new Error("Failed to create images directory")
 
     // Save avatar image if it exists and is a data URL
     const avatarData = (userData as any).avatar

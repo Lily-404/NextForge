@@ -24,19 +24,37 @@ export function DownloadProject({ downloadUrl, templateType, onRestart }: Downlo
         return
       }
 
-      // Trigger the download
+      // Fetch the file first to check for errors
+      const response = await fetch(downloadUrl)
+      if (!response.ok) {
+        const errorText = await response.text()
+        throw new Error(errorText || 'Download failed')
+      }
+
+      // Get the file blob
+      const blob = await response.blob()
+
+      // Create download link
+      const url = window.URL.createObjectURL(blob)
       const link = document.createElement("a")
-      link.href = downloadUrl
+      link.href = url
       link.download = `next-personal-website-${templateType}-${Date.now()}.zip`
       document.body.appendChild(link)
       link.click()
       document.body.removeChild(link)
+      window.URL.revokeObjectURL(url)
 
       // Set success status
       setDownloadStatus("success")
     } catch (error) {
       console.error("Download error:", error)
       setDownloadStatus("error")
+      // Show error message to user
+      const errorAlert = document.querySelector('[role="alert"]')
+      const errorDescription = errorAlert?.querySelector('.alert-description')
+      if (errorDescription instanceof HTMLElement) {
+        errorDescription.textContent = error instanceof Error ? error.message : '下载失败，请重试'
+      }
     }
   }
 

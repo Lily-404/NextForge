@@ -1,31 +1,490 @@
 import type JSZip from "jszip"
 
-export function generateCreativeTemplate(zip: JSZip, userData: any) {
-  // Create template directory structure
-  const templatesDir = zip.folder("components/templates/creative")
-
-  // Add index file to export all components
-  templatesDir.file("index.tsx", generateCreativeIndex())
-
-  // Add component files
-  templatesDir.file("template.tsx", generateCreativeTemplateComponent())
-  templatesDir.file("header.tsx", generateCreativeHeader())
-  templatesDir.file("footer.tsx", generateCreativeFooter())
-  templatesDir.file("hero-section.tsx", generateCreativeHeroSection())
-  templatesDir.file("about-section.tsx", generateCreativeAboutSection())
-  templatesDir.file("projects-section.tsx", generateCreativeProjectsSection())
-  templatesDir.file("contact-section.tsx", generateCreativeContactSection())
-
-  // Add types file
-  templatesDir.file("types.ts", generateCreativeTypes())
-
-  // Add utils file
-  templatesDir.file("utils.ts", generateCreativeUtils())
+// Generate types content
+function generateCreativeTypes() {
+  return `interface Project {
+  title: string
+  description: string
+  image: string
+  link: string
+  date: string
 }
 
-// Generate index file to export all components
-function generateCreativeIndex() {
-  return `// Export all creative template components
+interface SocialLinks {
+  github?: string
+  facebook?: string
+  instagram?: string
+  behance?: string
+  dribbble?: string
+  youtube?: string
+  weibo?: string
+  wechat?: string
+  bilibili?: string
+  jike?: string
+  zhihu?: string
+  douban?: string
+  codepen?: string
+  douyin?: string
+  xiaohongshu?: string
+  linkedin?: string
+  twitter?: string
+}
+
+export interface UserData {
+  name: string
+  email: string
+  phone: string
+  wechat: string
+  profession: string
+  location: string
+  bio: string
+  avatar: string
+  projects: Project[]
+  socialLinks: SocialLinks
+}`;
+}
+
+// Generate utils content
+function generateCreativeUtils() {
+  return "'use client'\n\n/**\n * Get a fallback character for avatar when no image is provided\n */\nexport function getImageFallback(name: string): string {\n  if (!name) return \"?\"\n  return name.charAt(0).toUpperCase()\n}\n\n/**\n * Format a date to a readable string\n */\nexport function formatDate(date: Date): string {\n  return new Intl.DateTimeFormat('en-US', {\n    year: 'numeric',\n    month: 'long',\n    day: 'numeric'\n  }).format(date)\n}";
+}
+
+export function generateCreativeTemplate(zip: JSZip, userData: any) {
+  // Add .env file
+  zip.file(".env", `NEXT_TELEMETRY_DISABLED=1
+NEXT_SKIP_VERSION_CHECK=1`)
+
+  // Add package.json with required dependencies
+  zip.file("package.json", JSON.stringify({
+    "name": "nextjs-creative-template",
+    "version": "0.1.0",
+    "private": true,
+    "scripts": {
+      "predev": "next telemetry disable",
+      "dev": "NEXT_TELEMETRY_DISABLED=1 next dev",
+      "build": "NEXT_TELEMETRY_DISABLED=1 next build",
+      "start": "NEXT_TELEMETRY_DISABLED=1 next start",
+      "lint": "next lint"
+    },
+    "dependencies": {
+      "@types/node": "20.11.25",
+      "@types/react": "18.2.64",
+      "@types/react-dom": "18.2.21",
+      "autoprefixer": "10.4.18",
+      "framer-motion": "^11.0.8",
+      "next": "14.2.1",
+      "postcss": "8.4.35",
+      "react": "18.2.0",
+      "react-dom": "18.2.0",
+      "tailwindcss": "3.4.1",
+      "typescript": "5.4.2"
+    }
+  }, null, 2))
+
+  // Add tsconfig.json
+  zip.file("tsconfig.json", JSON.stringify({
+    "compilerOptions": {
+      "lib": ["dom", "dom.iterable", "esnext"],
+      "allowJs": true,
+      "skipLibCheck": true,
+      "strict": true,
+      "noEmit": true,
+      "esModuleInterop": true,
+      "module": "esnext",
+      "moduleResolution": "bundler",
+      "resolveJsonModule": true,
+      "isolatedModules": true,
+      "jsx": "preserve",
+      "incremental": true,
+      "plugins": [{
+        "name": "next"
+      }],
+      "paths": {
+        "@/*": ["./*"]
+      }
+    },
+    "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
+    "exclude": ["node_modules"]
+  }, null, 2))
+
+  // Add next.config.js
+  zip.file("next.config.js", `/** @type {import('next').NextConfig} */
+const nextConfig = {
+  transpilePackages: ['framer-motion'],
+  experimental: {
+    optimizePackageImports: ['framer-motion']
+  },
+  // Disable telemetry and version checking
+  telemetry: false,
+  skipTraceAssets: true,
+  skipMiddlewareUrlNormalize: true
+}
+
+module.exports = nextConfig`)
+
+  // Add postcss.config.js
+  zip.file("postcss.config.js", `module.exports = {
+    plugins: {
+      tailwindcss: {},
+      autoprefixer: {},
+    },
+  }`)
+
+  // Add tailwind.config.js
+  zip.file("tailwind.config.js", `/** @type {import('tailwindcss').Config} */
+module.exports = {
+  content: [
+    './pages/**/*.{js,ts,jsx,tsx,mdx}',
+    './components/**/*.{js,ts,jsx,tsx,mdx}',
+    './app/**/*.{js,ts,jsx,tsx,mdx}',
+  ],
+  theme: {
+    extend: {},
+  },
+  plugins: [],
+}`)
+
+  // Add global.css
+  zip.file("app/globals.css", `@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --foreground-rgb: 0, 0, 0;
+  --background-start-rgb: 214, 219, 220;
+  --background-end-rgb: 255, 255, 255;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --foreground-rgb: 255, 255, 255;
+    --background-start-rgb: 0, 0, 0;
+    --background-end-rgb: 0, 0, 0;
+  }
+}
+
+body {
+  color: rgb(var(--foreground-rgb));
+  background: rgb(var(--background-start-rgb));
+}`)
+
+  // Add layout.tsx
+  zip.file("app/layout.tsx", `import './globals.css'
+
+export const metadata = {
+  title: 'Creative Portfolio',
+  description: 'A creative portfolio template',
+}
+
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode
+}) {
+  return (
+    <html lang="en">
+      <body>{children}</body>
+    </html>
+  )
+}`)
+
+  // Add page.tsx
+  zip.file("app/page.tsx", `import { CreativeTemplate } from "@/components/templates/creative"
+import userData from "@/data/user-data"
+
+export default function Home() {
+  return <CreativeTemplate userData={userData} />
+}`)
+
+  // Add user data type
+  zip.file("types/user-data.ts", `export interface UserData {
+  name?: string
+  profession?: string
+  bio?: string
+  avatar?: string
+  email?: string
+  phone?: string
+  location?: string
+  socialLinks?: {
+    github?: string
+    twitter?: string
+    facebook?: string
+    instagram?: string
+    behance?: string
+    dribbble?: string
+    youtube?: string
+    weibo?: string
+    wechat?: string
+    bilibili?: string
+    jike?: string
+    zhihu?: string
+    douban?: string
+    codepen?: string
+    douyin?: string
+    xiaohongshu?: string
+  }
+}
+`)
+
+  // Add user data
+  zip.file("data/user-data.ts", `import { UserData } from "@/types/user-data"
+
+const userData: UserData = ${JSON.stringify(userData, null, 2)}
+
+export default userData`)
+
+  // Create template directory structure
+  const templatesDir = zip.folder("components/templates/creative")
+  if (!templatesDir) throw new Error("Failed to create templates directory")
+
+  // Add the creative template component
+  const templateContent = `'use client'
+
+import type { UserData } from "@/types/user-data"
+import Image from "next/image"
+import { motion } from "framer-motion"
+
+export function CreativeTemplate({ userData }: { userData: UserData }) {
+  const socialPlatformNames: Record<string, string> = {
+    github: 'GitHub',
+    twitter: '推特',
+    facebook: '脸书',
+    instagram: '照片墙',
+    behance: 'Behance',
+    dribbble: 'Dribbble',
+    youtube: '油管',
+    weibo: '微博',
+    wechat: '微信公众号',
+    bilibili: '哔哩哔哩',
+    jike: '即刻',
+    zhihu: '知乎',
+    douban: '豆瓣',
+    codepen: 'CodePen',
+    douyin: '抖音',
+    xiaohongshu: '小红书',
+  }
+
+  return (
+    <div className="min-h-screen bg-[#f4f1eb] font-sans selection:bg-orange-200 relative">
+      <nav className="sticky top-0 w-full z-10 bg-[#f4f1eb]/80 backdrop-blur-sm transition-all duration-300 border-b border-neutral-200/50">
+        <div className="container mx-auto px-8 py-4">
+          <div className="max-w-4xl mx-auto flex justify-between items-center">
+            <motion.span 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="text-sm font-medium tracking-wide"
+            >
+              {userData.name || "Portfolio"}
+            </motion.span>
+            <motion.div 
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="flex gap-8 text-neutral-600"
+            >
+              <a href="#about" className="relative group">
+                <span className="text-sm tracking-wide">关于</span>
+                <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-neutral-400 group-hover:w-full transition-all duration-300"></span>
+              </a>
+              <a href="#works" className="relative group">
+                <span className="text-sm tracking-wide">作品</span>
+                <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-neutral-400 group-hover:w-full transition-all duration-300"></span>
+              </a>
+              <a href="#contact" className="relative group">
+                <span className="text-sm tracking-wide">联系</span>
+                <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-neutral-400 group-hover:w-full transition-all duration-300"></span>
+              </a>
+            </motion.div>
+          </div>
+        </div>
+      </nav>
+
+      <main>
+        <section className="min-h-[calc(100vh-4rem)] flex items-center relative overflow-hidden">
+            <motion.div 
+              initial={{ opacity: 0.2 }}
+              animate={{ opacity: 0.8 }}
+              transition={{ duration: 1.5 }}
+              className="absolute inset-0 bg-gradient-to-br from-orange-50/50 via-neutral-50/30 to-neutral-100/50 -z-10"
+            />
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 0.4 }}
+              transition={{ duration: 2 }}
+              className="absolute inset-0 bg-[radial-gradient(circle_at_50%_120%,rgba(255,237,213,0.4),rgba(255,255,255,0))] -z-10"
+            />
+            
+            <div className="absolute w-full h-full overflow-hidden -z-20">
+              <motion.div
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 0.1, scale: 1 }}
+                transition={{ duration: 2 }}
+                className="absolute -right-1/4 top-1/4 w-96 h-96 bg-orange-200 rounded-full blur-3xl"
+              />
+              <motion.div
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 0.1, scale: 1 }}
+                transition={{ duration: 2, delay: 0.5 }}
+                className="absolute -left-1/4 bottom-1/4 w-96 h-96 bg-neutral-200 rounded-full blur-3xl"
+              />
+            </div>
+
+            <motion.div 
+              initial={{ opacity: 0, y: 50 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2 }}
+              className="container mx-auto px-8 -mt-16 relative"
+            >
+              <div className="max-w-4xl mx-auto">
+                <div className="relative mb-12">
+                  {userData.avatar ? (
+                    <div className="w-32 h-32 relative overflow-hidden">
+                      <Image
+                        src={userData.avatar}
+                        alt={userData.name}
+                        width={128}
+                        height={128}
+                        fill
+                        className="object-cover rounded-3xl"
+                      />
+                    </div>
+                  ) : (
+                    <div className="w-32 h-32 bg-neutral-100 dark:bg-neutral-800 rounded-3xl flex items-center justify-center">
+                      <span className="text-4xl font-medium text-neutral-400">
+                        {userData.name?.[0]?.toUpperCase() || "P"}
+                      </span>
+                    </div>
+                  )}
+                </div>
+
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.3 }}
+                  className="space-y-1"
+                >
+                  <h1 className="text-4xl font-bold tracking-tight">{userData.name || "Portfolio"}</h1>
+                  <p className="text-lg text-neutral-600">{userData.profession || "Creative Professional"}</p>
+                </motion.div>
+
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.4 }}
+                  className="mt-8 max-w-2xl"
+                >
+                  <p className="text-neutral-600 leading-relaxed">
+                    {userData.bio || "A creative professional passionate about design and technology."}
+                  </p>
+                </motion.div>
+
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.5 }}
+                  className="mt-8 flex flex-wrap gap-3"
+                >
+                  {Object.entries(userData.socialLinks || {}).map(([platform, link]) => {
+                    if (!link) return null
+                    return (
+                      <a
+                        key={platform}
+                        href={link}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="px-4 py-2 bg-white/50 hover:bg-white/80 rounded-xl text-sm text-neutral-600 transition-colors duration-200"
+                      >
+                        {socialPlatformNames[platform] || platform}
+                      </a>
+                    )
+                  })}
+                </motion.div>
+              </div>
+            </motion.div>
+          </section>
+
+        <section id="contact" className="py-32">
+          <div className="container mx-auto px-8">
+            <div className="max-w-4xl mx-auto">
+              <motion.div
+                initial={{ opacity: 0, y: 50 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                className="grid grid-cols-1 md:grid-cols-2 gap-16"
+              >
+              <div>
+                <h2 className="text-4xl font-light mb-8">联系方式</h2>
+                <div className="space-y-4">
+                    {userData.email && (
+                      <motion.a 
+                        href={\`mailto:\${userData.email}\`}
+                        whileHover={{ x: 10 }}
+                        className="group block p-4 rounded-xl hover:bg-white/50 transition-colors duration-300"
+                      >
+                        <div className="flex items-center gap-3">
+                          <div className="w-10 h-10 rounded-full bg-orange-100/50 flex items-center justify-center">
+                            <svg className="w-5 h-5 text-neutral-600" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                              <path d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                            </svg>
+                          </div>
+                          <span className="text-neutral-600 group-hover:text-neutral-900 transition-colors">
+                            {userData.email}
+                          </span>
+                        </div>
+                      </motion.a>
+                    )}
+                    {userData.phone && (
+                      <motion.a 
+                        href={\`tel:\${userData.phone}\`}
+                        whileHover={{ x: 10 }}
+                        className="group block p-4 rounded-xl hover:bg-white/50 transition-colors duration-300"
+                      >
+                        <div className="flex items-center gap-3">
+                          <div className="w-10 h-10 rounded-full bg-orange-100/50 flex items-center justify-center">
+                            <svg className="w-5 h-5 text-neutral-600" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                              <path d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                            </svg>
+                          </div>
+                          <span className="text-neutral-600 group-hover:text-neutral-900 transition-colors">
+                            {userData.phone}
+                          </span>
+                        </div>
+                      </motion.a>
+                    )}
+                    {userData.location && (
+                      <motion.div 
+                        whileHover={{ x: 10 }}
+                        className="group block p-4 rounded-xl hover:bg-white/50 transition-colors duration-300"
+                      >
+                        <div className="flex items-center gap-3">
+                          <div className="w-10 h-10 rounded-full bg-orange-100/50 flex items-center justify-center">
+                            <svg className="w-5 h-5 text-neutral-600" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                              <path d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                              <path d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                            </svg>
+                          </div>
+                          <span className="text-neutral-600 group-hover:text-neutral-900 transition-colors">
+                            {userData.location}
+                          </span>
+                        </div>
+                      </motion.div>
+                    )}
+                  </div>
+                </div>
+              </motion.div>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+  )
+}`
+
+
+
+  templatesDir.file("index.tsx", templateContent);
+
+  // Generate index file to export all components
+  const indexContent = `// Export all creative template components
 export { CreativeTemplate } from './template'
 export { CreativeHeader } from './header'
 export { CreativeFooter } from './footer'
@@ -33,8 +492,8 @@ export { CreativeHeroSection } from './hero-section'
 export { CreativeAboutSection } from './about-section'
 export { CreativeProjectsSection } from './projects-section'
 export { CreativeContactSection } from './contact-section'
-`
-}
+`;
+  templatesDir.file("index.ts", indexContent);
 
 // Generate main template component
 function generateCreativeTemplateComponent() {
@@ -424,58 +883,13 @@ export function CreativeContactSection() {
 }
 `
 }
+  // Add types file
+  const typesContent = generateCreativeTypes();
+  zip.file("types/user-data.ts", typesContent);
 
-// Generate types file
-function generateCreativeTypes() {
-  return `export interface Project {
-  title: string
-  description: string
-  imageUrl: string
-  link: string
-}
+  // Add utils file
+  const utilsContent = generateCreativeUtils();
+  templatesDir.file("utils.ts", utilsContent);
 
-export interface SocialLinks {
-  wechat?: string
-  weibo?: string
-  github?: string
-  linkedin?: string
-  twitter?: string
-}
-
-export interface UserData {
-  name: string
-  email: string
-  phone: string
-  wechat: string
-  profession: string
-  location: string
-  bio: string
-  avatar: string
-  projects: Project[]
-  socialLinks: SocialLinks
-}
-`
-}
-
-// Generate utils file
-function generateCreativeUtils() {
-  return `/**
- * Get a fallback character for avatar when no image is provided
- */
-export function getImageFallback(name: string): string {
-  if (!name) return "?"
-  return name.charAt(0).toUpperCase()
-}
-
-/**
- * Format a date to a readable string
- */
-export function formatDate(date: Date): string {
-  return new Intl.DateTimeFormat('en-US', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric'
-  }).format(date)
-}
-`
+  return zip;
 }

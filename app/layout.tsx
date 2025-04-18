@@ -7,7 +7,7 @@ import { ThemeProvider } from "@/components/theme-provider"
 const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
-  title: "Next.js 模板生成器",
+  title: "Next.js 落地页生成器",
   description: "创建个性化的 Next.js 项目，展示您的个人信息和作品集",
     generator: 'v0.dev'
 }

@@ -1,101 +1,65 @@
 import type JSZip from "jszip"
 
 export function generateBusinessTemplate(zip: JSZip, userData: any) {
-  // Create template directory structure
+  // 创建模板目录结构
   const templatesDir = zip.folder("components/templates/business")
 
-  // Add index file to export all components
-  templatesDir.file("index.tsx", generateBusinessIndex())
-
-  // Add component files
+  // 添加组件文件
   templatesDir.file("template.tsx", generateBusinessTemplateComponent())
   templatesDir.file("header.tsx", generateBusinessHeader())
-  templatesDir.file("footer.tsx", generateBusinessFooter())
   templatesDir.file("hero-section.tsx", generateBusinessHeroSection())
   templatesDir.file("about-section.tsx", generateBusinessAboutSection())
   templatesDir.file("projects-section.tsx", generateBusinessProjectsSection())
   templatesDir.file("contact-section.tsx", generateBusinessContactSection())
+  templatesDir.file("footer.tsx", generateBusinessFooter())
 
-  // Add types file
-  templatesDir.file("types.ts", generateBusinessTypes())
-
-  // Add utils file
+  // 添加工具文件
   templatesDir.file("utils.ts", generateBusinessUtils())
 }
 
-// Generate index file to export all components
-function generateBusinessIndex() {
-  return `// Export all business template components
-export { BusinessTemplate } from './template'
-export { BusinessHeader } from './header'
-export { BusinessFooter } from './footer'
-export { BusinessHeroSection } from './hero-section'
-export { BusinessAboutSection } from './about-section'
-export { BusinessProjectsSection } from './projects-section'
-export { BusinessContactSection } from './contact-section'
-`
-}
-
-// Generate main template component
+// 生成主模板组件
 function generateBusinessTemplateComponent() {
   return `import { BusinessHeader } from './header'
-import { BusinessFooter } from './footer'
 import { BusinessHeroSection } from './hero-section'
 import { BusinessAboutSection } from './about-section'
 import { BusinessProjectsSection } from './projects-section'
 import { BusinessContactSection } from './contact-section'
-import userData from '@/data/user-data'
+import { BusinessFooter } from './footer'
 
 export function BusinessTemplate() {
   return (
-    <div className="min-h-screen bg-background text-foreground">
+    <div className="min-h-screen bg-white font-sans">
       <BusinessHeader />
-      
       <main>
         <BusinessHeroSection />
-        
         <BusinessAboutSection />
-        
-        {userData.projects && userData.projects.length > 0 && userData.projects[0].title && (
-          <BusinessProjectsSection />
-        )}
-        
+        <BusinessProjectsSection />
         <BusinessContactSection />
       </main>
-      
       <BusinessFooter />
     </div>
   )
-}
-`
+}`
 }
 
 // Generate header component
 function generateBusinessHeader() {
-  return `import { ThemeToggle } from "@/components/theme-toggle"
-import userData from "@/data/user-data"
+  return `import userData from "@/data/user-data"
 
 export function BusinessHeader() {
   return (
-    <header className="border-b border-border sticky top-0 bg-background/95 backdrop-blur-sm z-10">
-      <div className="container mx-auto px-4">
-        <div className="flex justify-between items-center h-16">
-          <div className="font-bold text-xl">{userData.name}</div>
-          <nav className="hidden md:flex space-x-8">
-            <a href="#about" className="text-foreground hover:text-primary transition-colors">
-              About
-            </a>
-            <a href="#projects" className="text-foreground hover:text-primary transition-colors">
-              Projects
-            </a>
-            <a href="#contact" className="text-foreground hover:text-primary transition-colors">
-              Contact
-            </a>
-          </nav>
-          <ThemeToggle />
+    <nav className="bg-gray-900/95 backdrop-blur-sm sticky top-0 z-10 border-b border-gray-800">
+      <div className="max-w-7xl mx-auto px-8">
+        <div className="flex justify-between items-center h-20">
+          <div className="font-bold text-2xl text-white tracking-tight">{userData.name}</div>
+          <div className="flex space-x-12">
+            <a href="#about" className="text-gray-300 hover:text-white transition-colors text-sm uppercase tracking-widest">关于</a>
+            <a href="#projects" className="text-gray-300 hover:text-white transition-colors text-sm uppercase tracking-widest">项目</a>
+            <a href="#contact" className="text-gray-300 hover:text-white transition-colors text-sm uppercase tracking-widest">联系</a>
+          </div>
         </div>
       </div>
-    </header>
+    </nav>
   )
 }
 `
@@ -107,18 +71,151 @@ function generateBusinessFooter() {
 
 export function BusinessFooter() {
   return (
-    <footer className="bg-muted py-8">
-      <div className="container mx-auto px-4">
-        <div className="max-w-4xl mx-auto text-center">
-          <p className="text-muted-foreground">
-            © {new Date().getFullYear()} {userData.name}. All rights reserved.
-          </p>
-        </div>
+    <footer className="bg-gray-900 py-20">
+      <div className="max-w-7xl mx-auto px-8 text-center">
+        <p className="text-gray-500 text-sm tracking-widest uppercase">
+          © {new Date().getFullYear()} {userData.name}
+        </p>
       </div>
     </footer>
   )
+}`
 }
-`
+
+// Generate about section component
+function generateBusinessAboutSection() {
+  return `import userData from "@/data/user-data"
+
+export function BusinessAboutSection() {
+  return (
+    <section id="about" className="py-32">
+      <div className="max-w-7xl mx-auto px-8">
+        <h2 className="text-4xl font-bold text-gray-900 mb-16 tracking-tight">关于我</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-16">
+          <div className="bg-white border-t-2 border-gray-900 pt-8">
+            <p className="text-gray-600 leading-relaxed text-lg">{userData.bio}</p>
+          </div>
+          <div className="space-y-8">
+            {userData.skills?.map((skill, index) => (
+              <div key={index} className="border-l-2 border-gray-900 pl-8">
+                <h3 className="text-xl font-bold text-gray-900 mb-2">{skill.category}</h3>
+                <p className="text-gray-600">{skill.items.join(' · ')}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
+  )
+}`
+}
+
+// Generate projects section component
+function generateBusinessProjectsSection() {
+  return `import Image from "next/image"
+import userData from "@/data/user-data"
+
+export function BusinessProjectsSection() {
+  return (
+    <section id="projects" className="py-32 bg-gray-50">
+      <div className="max-w-7xl mx-auto px-8">
+        <h2 className="text-4xl font-bold text-gray-900 mb-16 tracking-tight">项目展示</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
+          {userData.projects?.map((project, index) => (
+            <div key={index} className="group bg-white hover:bg-gray-900 transition-all duration-500">
+              {project.imageUrl && (
+                <div className="aspect-video relative">
+                  <Image 
+                    src={project.imageUrl} 
+                    alt={project.title} 
+                    fill 
+                    className="object-cover group-hover:opacity-80 transition-opacity duration-500" 
+                  />
+                </div>
+              )}
+              <div className="p-12">
+                <h3 className="text-2xl font-bold text-gray-900 group-hover:text-white mb-4 tracking-tight">
+                  {project.title}
+                </h3>
+                {project.description && (
+                  <p className="text-gray-600 group-hover:text-gray-300 mb-8">
+                    {project.description}
+                  </p>
+                )}
+                {project.link && (
+                  <a 
+                    href={project.link} 
+                    target="_blank" 
+                    rel="noopener noreferrer" 
+                    className="inline-flex items-center text-sm uppercase tracking-widest text-gray-900 group-hover:text-white"
+                  >
+                    了解更多
+                    <span className="ml-2">→</span>
+                  </a>
+                )}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  )
+}`
+}
+
+// Generate contact section component
+function generateBusinessContactSection() {
+  return `import userData from "@/data/user-data"
+
+export function BusinessContactSection() {
+  return (
+    <section id="contact" className="py-32">
+      <div className="max-w-7xl mx-auto px-8">
+        <h2 className="text-4xl font-bold text-gray-900 mb-16 tracking-tight">联系方式</h2>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
+          <div className="col-span-2 bg-gray-900 p-12 text-white">
+            <h3 className="text-2xl font-bold mb-8 tracking-tight">让我们开始合作</h3>
+            <p className="text-gray-300 text-lg mb-8">
+              如果您对我的工作感兴趣，或者想要了解更多信息，请随时与我联系。
+            </p>
+            <div className="space-y-6">
+              {userData.email && (
+                <a href={\`mailto:\${userData.email}\`} className="flex items-center text-white hover:text-gray-300">
+                  <span className="mr-4 text-xl">✉️</span>
+                  {userData.email}
+                </a>
+              )}
+              {userData.phone && (
+                <a href={\`tel:\${userData.phone}\`} className="flex items-center text-white hover:text-gray-300">
+                  <span className="mr-4 text-xl">📱</span>
+                  {userData.phone}
+                </a>
+              )}
+            </div>
+          </div>
+          <div className="bg-gray-50 p-12">
+            <h3 className="text-xl font-bold text-gray-900 mb-8 tracking-tight">社交媒体</h3>
+            <div className="space-y-4">
+              {Object.entries(userData.socialLinks || {}).map(([platform, link]) => (
+                link && (
+                  <a
+                    key={platform}
+                    href={link}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="block text-gray-600 hover:text-gray-900 transition-colors uppercase text-sm tracking-widest"
+                  >
+                    {platform}
+                  </a>
+                )
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  )
+}`
 }
 
 // Generate hero section component
@@ -179,224 +276,6 @@ export function BusinessHeroSection() {
                   LinkedIn
                 </a>
               )}
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-  )
-}
-`
-}
-
-// Generate about section component
-function generateBusinessAboutSection() {
-  return `import userData from "@/data/user-data"
-
-export function BusinessAboutSection() {
-  return (
-    <section id="about" className="py-16 border-b border-border">
-      <div className="container mx-auto px-4">
-        <div className="max-w-4xl mx-auto">
-          <h2 className="text-3xl font-bold mb-8">About Me</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="md:col-span-2">
-              <p className="text-muted-foreground leading-relaxed mb-4">
-                {userData.bio}
-              </p>
-              <p className="text-muted-foreground leading-relaxed">
-                As a {userData.profession}, I am dedicated to providing high-quality services and solutions.
-                I believe that through professional knowledge and innovative thinking, I can create real value for clients.
-              </p>
-            </div>
-            <div className="bg-card p-6 rounded-lg border border-border">
-              <h3 className="font-bold text-lg mb-4">Contact Information</h3>
-              <ul className="space-y-3">
-                {userData.email && (
-                  <li className="flex items-center">
-                    <span className="text-muted-foreground mr-2">✉️</span>
-                    <a href={\`mailto:\${userData.email}\`} className="text-primary hover:underline">
-                      {userData.email}
-                    </a>
-                  </li>
-                )}
-                {userData.phone && (
-                  <li className="flex items-center">
-                    <span className="text-muted-foreground mr-2">📱</span>
-                    <a href={\`tel:\${userData.phone}\`} className="text-primary hover:underline">
-                      {userData.phone}
-                    </a>
-                  </li>
-                )}
-                {userData.wechat && (
-                  <li className="flex items-center">
-                    <span className="text-muted-foreground mr-2">WeChat:</span>
-                    <span>{userData.wechat}</span>
-                  </li>
-                )}
-              </ul>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-  )
-}
-`
-}
-
-// Generate projects section component
-function generateBusinessProjectsSection() {
-  return `import Image from "next/image"
-import userData from "@/data/user-data"
-
-export function BusinessProjectsSection() {
-  return (
-    <section id="projects" className="py-16 border-b border-border">
-      <div className="container mx-auto px-4">
-        <div className="max-w-4xl mx-auto">
-          <h2 className="text-3xl font-bold mb-8">Project Portfolio</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {userData.projects.map((project, index) => (
-              <div key={index} className="bg-card border border-border rounded-lg overflow-hidden">
-                {project.imageUrl ? (
-                  <div className="aspect-video relative">
-                    <Image
-                      src={project.imageUrl || "/placeholder.svg?height=200&width=300"}
-                      alt={project.title}
-                      fill
-                      className="object-cover"
-                    />
-                  </div>
-                ) : (
-                  <div className="aspect-video bg-muted flex items-center justify-center">
-                    <span className="text-muted-foreground">No image</span>
-                  </div>
-                )}
-                <div className="p-6">
-                  <h3 className="font-bold text-xl mb-2">{project.title}</h3>
-                  {project.description && <p className="text-muted-foreground mb-4">{project.description}</p>}
-                  {project.link && (
-                    <a
-                      href={project.link}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center px-4 py-2 bg-primary text-primary-foreground rounded-md text-sm hover:bg-primary/90 transition-colors"
-                    >
-                      View Project
-                    </a>
-                  )}
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-    </section>
-  )
-}
-`
-}
-
-// Generate contact section component
-function generateBusinessContactSection() {
-  return `import userData from "@/data/user-data"
-
-export function BusinessContactSection() {
-  return (
-    <section id="contact" className="py-16">
-      <div className="container mx-auto px-4">
-        <div className="max-w-4xl mx-auto">
-          <h2 className="text-3xl font-bold mb-8">Contact Me</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div>
-              <h3 className="text-xl font-bold mb-4">Contact Information</h3>
-              <p className="text-muted-foreground mb-6">If you're interested in my services or have any questions, please feel free to contact me.</p>
-              <ul className="space-y-4">
-                {userData.email && (
-                  <li className="flex items-center">
-                    <span className="text-primary mr-3 text-xl">✉️</span>
-                    <a href={\`mailto:\${userData.email}\`} className="text-foreground hover:text-primary">
-                      {userData.email}
-                    </a>
-                  </li>
-                )}
-                {userData.phone && (
-                  <li className="flex items-center">
-                    <span className="text-primary mr-3 text-xl">📱</span>
-                    <a href={\`tel:\${userData.phone}\`} className="text-foreground hover:text-primary">
-                      {userData.phone}
-                    </a>
-                  </li>
-                )}
-                {userData.wechat && (
-                  <li className="flex items-center">
-                    <span className="text-primary mr-3 text-xl">💬</span>
-                    <span className="text-foreground">{userData.wechat}</span>
-                  </li>
-                )}
-                {userData.location && (
-                  <li className="flex items-center">
-                    <span className="text-primary mr-3 text-xl">📍</span>
-                    <span className="text-foreground">{userData.location}</span>
-                  </li>
-                )}
-              </ul>
-            </div>
-            <div>
-              <h3 className="text-xl font-bold mb-4">Social Media</h3>
-              <div className="grid grid-cols-2 gap-3">
-                {userData.socialLinks?.wechat && (
-                  <a
-                    href={userData.socialLinks.wechat}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="px-4 py-3 bg-card border border-border rounded-md text-foreground hover:bg-muted transition-colors"
-                  >
-                    WeChat
-                  </a>
-                )}
-                {userData.socialLinks?.weibo && (
-                  <a
-                    href={userData.socialLinks.weibo}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="px-4 py-3 bg-card border border-border rounded-md text-foreground hover:bg-muted transition-colors"
-                  >
-                    Weibo
-                  </a>
-                )}
-                {userData.socialLinks?.github && (
-                  <a
-                    href={userData.socialLinks.github}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="px-4 py-3 bg-card border border-border rounded-md text-foreground hover:bg-muted transition-colors"
-                  >
-                    GitHub
-                  </a>
-                )}
-                {userData.socialLinks?.linkedin && (
-                  <a
-                    href={userData.socialLinks.linkedin}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="px-4 py-3 bg-card border border-border rounded-md text-foreground hover:bg-muted transition-colors"
-                  >
-                    LinkedIn
-                  </a>
-                )}
-                {userData.socialLinks?.twitter && (
-                  <a
-                    href={userData.socialLinks.twitter}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="px-4 py-3 bg-card border border-border rounded-md text-foreground hover:bg-muted transition-colors"
-                  >
-                    Twitter
-                  </a>
-                )}
-              </div>
             </div>
           </div>
         </div>

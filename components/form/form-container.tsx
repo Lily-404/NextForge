@@ -21,13 +21,45 @@ const initialUserData: UserData = {
   avatar: "",
   projects: [],
   socialLinks: {
+    // 国内社交媒体
     wechat: "",
     weibo: "",
-    github: "",
-    jike: "",
-    xiaohongshu: "",
+    bilibili: "",
+    zhihu: "",
     douyin: "",
-    bilibili: ""
+    xiaohongshu: "",
+    jike: "",
+    douban: "",
+    red: "",
+    maimai: "",
+    huaban: "",
+    
+    // 国际社交媒体
+    github: "",
+    twitter: "",
+    facebook: "",
+    instagram: "",
+    linkedin: "",
+    telegram: "",
+    discord: "",
+    reddit: "",
+    
+    // 设计社区
+    behance: "",
+    dribbble: "",
+    codepen: "",
+    figma: "",
+    artstation: "",
+    
+    // 视频平台
+    youtube: "",
+    vimeo: "",
+    
+    // 开发者社区
+    stackoverflow: "",
+    medium: "",
+    devto: "",
+    hashnode: ""
   }
 }
 
@@ -103,25 +135,35 @@ export default function FormContainer() {
   }
 
   return (
-    <div className="space-y-8">
-      <Steps currentStep={currentStep} />
+    <div className="min-h-[600px]">
+      <div className="p-6 border-b border-neutral-200 dark:border-neutral-800">
+        <Steps currentStep={currentStep} />
+      </div>
 
-      <Card>
-        <CardContent className="pt-6">
-          {currentStep === 1 && (
-            <UserInfoForm userData={userData} onChange={handleUserDataChange} onNext={handleNextStep} />
-          )}
+      <div className="p-8">
+        {currentStep === 1 && (
+          <div className="max-w-2xl mx-auto">
+            <UserInfoForm 
+              userData={userData} 
+              onChange={handleUserDataChange} 
+              onNext={handleNextStep} 
+            />
+          </div>
+        )}
 
-          {currentStep === 2 && (
+        {currentStep === 2 && (
+          <div className="max-w-4xl mx-auto">
             <TemplateSelector
               selectedTemplate={selectedTemplate}
               onTemplateChange={handleTemplateChange}
               onNext={handleNextStep}
               onPrev={handlePrevStep}
             />
-          )}
+          </div>
+        )}
 
-          {currentStep === 3 && (
+        {currentStep === 3 && (
+          <div className="max-w-4xl mx-auto">
             <ProjectPreview
               userData={userData}
               templateType={selectedTemplate}
@@ -129,17 +171,19 @@ export default function FormContainer() {
               onPrev={handlePrevStep}
               isGenerating={isGenerating}
             />
-          )}
+          </div>
+        )}
 
-          {currentStep === 4 && (
+        {currentStep === 4 && (
+          <div className="max-w-xl mx-auto text-center">
             <DownloadProject 
               downloadUrl={downloadUrl} 
               templateType={selectedTemplate} 
               onRestart={handleRestart}
             />
-          )}
-        </CardContent>
-      </Card>
+          </div>
+        )}
+      </div>
     </div>
   )
 }
