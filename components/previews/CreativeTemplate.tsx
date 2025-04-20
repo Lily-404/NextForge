@@ -1,8 +1,14 @@
+"use client"
+
 import type { UserData } from "@/types/user-data"
 import Image from "next/image"
 import { motion } from "framer-motion"
 
-export default function CreativeTemplate({ userData }: { userData: UserData }) {
+interface CreativeTemplateProps {
+  userData: UserData
+}
+
+export default function CreativeTemplate({ userData }: CreativeTemplateProps) {
   const socialPlatformNames: Record<string, string> = {
     github: 'GitHub',
     twitter: '推特',
@@ -186,57 +192,54 @@ export default function CreativeTemplate({ userData }: { userData: UserData }) {
               <div className="max-w-4xl mx-auto">
                 <h2 className="text-4xl font-light mb-16">精选作品</h2>
                 <div className="grid grid-cols-1 gap-16">
-                  {userData.projects.map((project: { imageUrl?: string; title: string; description?: string; link?: string }, index: number) => (
-                  <motion.div
-                    key={index}
-                    initial={{ opacity: 0, y: 50 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ delay: index * 0.1 }}
-                    className="group relative"
-                  >
-                    {project.imageUrl && (
-                      <div className="aspect-[16/9] relative mb-8 overflow-hidden rounded-2xl">
-                        <div className="absolute inset-0 bg-gradient-to-tr from-orange-100/10 to-neutral-100/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-10" />
-                        <div className="absolute -inset-0.5 bg-gradient-to-tr from-orange-200/50 to-neutral-200/50 opacity-0 group-hover:opacity-30 transition-opacity duration-500 blur-sm" />
-                        <Image
-                          src={project.imageUrl}
-                          alt={project.title}
-                          fill
-                          className="object-cover transform group-hover:scale-105 transition-transform duration-700 relative z-0"
-                        />
-                      </div>
-                    )}
+                  {userData.projects.map((project, index) => (
                     <motion.div
-                      initial={{ opacity: 0, x: -20 }}
-                      whileInView={{ opacity: 1, x: 0 }}
+                      key={index}
+                      initial={{ opacity: 0, y: 50 }}
+                      whileInView={{ opacity: 1, y: 0 }}
                       viewport={{ once: true }}
-                      className="absolute -left-4 top-0 w-1 h-full bg-gradient-to-b from-orange-200/50 via-neutral-200/30 to-transparent"
-                    />
-                    <h3 className="text-2xl font-light mb-4">{project.title}</h3>
-                    {project.description && (
-                      <p className="text-neutral-600 mb-6">{project.description}</p>
-                    )}
-                    {project.link && (
-                      <a
-                        href={project.link}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-flex items-center text-sm text-neutral-600 hover:text-neutral-900 transition-colors"
-                      >
-                        了解更多
-                        <svg className="w-4 h-4 ml-2" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                          <path d="M5 12h14M12 5l7 7-7 7" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                        </svg>
-                      </a>
-                    )}
-                  </motion.div>
-                ))}
-                </div>
-              </div>
-            </div>
-          </section>
-
+                      transition={{ delay: index * 0.1 }}
+                      className="group relative"
+                    >
+                      {project.imageUrl && (
+                        <div className="aspect-[16/9] relative mb-8 overflow-hidden rounded-2xl">
+                          <Image
+                            src={project.imageUrl}
+                            alt={project.title}
+                            fill
+                            className="object-cover transition-transform duration-500 group-hover:scale-105"
+                          />
+                        </div>
+                      )}
+                      <h3 className="text-2xl font-light mb-4">{project.title}</h3>
+                      {project.description && (
+                        <p className="text-neutral-600 mb-6">{project.description}</p>
+                      )}
+                      {project.link && (
+                        <a
+                          href={project.link}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center text-sm font-medium text-neutral-900 hover:text-neutral-600 transition-colors"
+                        >
+                          查看项目
+                          <svg
+                            className="ml-2 w-4 h-4"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                            xmlns="http://www.w3.org/2000/svg"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M14 5l7 7m0 0l-7 7m7-7H3"
+                            />
+                          </svg>
+                        </a>
+                      )}
+                    </motion.div>
                   ))}
                 </div>
               </div>
@@ -247,146 +250,56 @@ export default function CreativeTemplate({ userData }: { userData: UserData }) {
         <section id="contact" className="py-32">
           <div className="container mx-auto px-8">
             <div className="max-w-4xl mx-auto">
-              <motion.div
-                initial={{ opacity: 0, y: 50 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                className="grid grid-cols-1 md:grid-cols-2 gap-16"
-              >
-              <div>
-                <h2 className="text-4xl font-light mb-8">联系方式</h2>
-                <div className="space-y-4">
-                  {userData.email && (
-                    <motion.a 
+              <h2 className="text-4xl font-light mb-16">联系方式</h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                {userData.email && (
+                  <div>
+                    <h3 className="text-sm font-medium text-neutral-400 mb-2">邮箱</h3>
+                    <a
                       href={`mailto:${userData.email}`}
-                      whileHover={{ x: 10 }}
-                      className="group block p-4 rounded-xl hover:bg-white/50 transition-colors duration-300"
+                      className="text-lg hover:text-neutral-600 transition-colors"
                     >
-                      <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-full bg-orange-100/50 flex items-center justify-center">
-                          <svg className="w-5 h-5 text-neutral-600" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                            <path d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                          </svg>
-                        </div>
-                        <span className="text-neutral-600 group-hover:text-neutral-900 transition-colors">
-                          {userData.email}
-                        </span>
-                      </div>
-                    </motion.a>
-                  )}
-                  {userData.phone && (
-                    <motion.a 
-                      href={`tel:${userData.phone}`}
-                      whileHover={{ x: 10 }}
-                      className="group block p-4 rounded-xl hover:bg-white/50 transition-colors duration-300"
-                    >
-                      <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-full bg-orange-100/50 flex items-center justify-center">
-                          <svg className="w-5 h-5 text-neutral-600" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                            <path d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                          </svg>
-                        </div>
-                        <span className="text-neutral-600 group-hover:text-neutral-900 transition-colors">
-                          {userData.phone}
-                        </span>
-                      </div>
-                    </motion.a>
-                  )}
-                  {userData.location && (
-                    <motion.div 
-                      whileHover={{ x: 10 }}
-                      className="group block p-4 rounded-xl hover:bg-white/50 transition-colors duration-300"
-                    >
-                      <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-full bg-orange-100/50 flex items-center justify-center">
-                          <svg className="w-5 h-5 text-neutral-600" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                            <path d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                      >
-                        <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 rounded-full bg-orange-100/50 flex items-center justify-center">
-                            <svg className="w-5 h-5 text-neutral-600" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                              <path d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                            </svg>
-                          </div>
-                          <span className="text-neutral-600 group-hover:text-neutral-900 transition-colors">
-                            {userData.email}
-                          </span>
-                        </div>
-                      </motion.a>
-                    )}
-                    {userData.phone && (
-                      <motion.a 
-                        href={`tel:${userData.phone}`}
-                        whileHover={{ x: 10 }}
-                        className="group block p-4 rounded-xl hover:bg-white/50 transition-colors duration-300"
-                      >
-                        <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 rounded-full bg-orange-100/50 flex items-center justify-center">
-                            <svg className="w-5 h-5 text-neutral-600" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                              <path d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                            </svg>
-                          </div>
-                          <span className="text-neutral-600 group-hover:text-neutral-900 transition-colors">
-                            {userData.phone}
-                          </span>
-                        </div>
-                      </motion.a>
-                    )}
-                    {userData.location && (
-                      <motion.div 
-                        whileHover={{ x: 10 }}
-                        className="group block p-4 rounded-xl hover:bg-white/50 transition-colors duration-300"
-                      >
-                        <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 rounded-full bg-orange-100/50 flex items-center justify-center">
-                            <svg className="w-5 h-5 text-neutral-600" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                              <path d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                              <path d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                            </svg>
-                          </div>
-                          <span className="text-neutral-600 group-hover:text-neutral-900 transition-colors">
-                            {userData.location}
-                          </span>
-                        </div>
-                      </motion.div>
-                    )}
+                      {userData.email}
+                    </a>
                   </div>
-                </div>
-                <div>
-                  <h2 className="text-4xl font-light mb-8">社交媒体</h2>
-                  <div className="flex flex-wrap gap-4">
-                    {Object.entries(userData.socialLinks || {}).map(([platform, link]) => {
-                      if (!link) return null
-                      return (
-                        <motion.a
+                )}
+                {userData.phone && (
+                  <div>
+                    <h3 className="text-sm font-medium text-neutral-400 mb-2">电话</h3>
+                    <a
+                      href={`tel:${userData.phone}`}
+                      className="text-lg hover:text-neutral-600 transition-colors"
+                    >
+                      {userData.phone}
+                    </a>
+                  </div>
+                )}
+              </div>
+
+              {userData.socialLinks && Object.keys(userData.socialLinks).length > 0 && (
+                <div className="mt-16">
+                  <h3 className="text-sm font-medium text-neutral-400 mb-6">社交媒体</h3>
+                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+                    {Object.entries(userData.socialLinks).map(([platform, link]) => (
+                      link && (
+                        <a
                           key={platform}
                           href={link}
                           target="_blank"
                           rel="noopener noreferrer"
-                          whileHover={{ scale: 1.05 }}
-                          className="px-6 py-3 bg-white rounded-2xl text-sm text-neutral-600 hover:shadow-sm transition-all duration-300"
+                          className="px-4 py-3 border border-neutral-200 rounded-xl hover:bg-neutral-50 transition-colors"
                         >
-                          {socialPlatformNames[platform] || platform}
-                        </motion.a>
+                          <span className="text-sm">{socialPlatformNames[platform] || platform}</span>
+                        </a>
                       )
-                    })}
+                    ))}
                   </div>
                 </div>
-              </motion.div>
+              )}
             </div>
           </div>
         </section>
       </main>
-
-      <footer className="py-8 border-t border-neutral-200">
-        <div className="container mx-auto px-8">
-          <div className="max-w-4xl mx-auto">
-            <p className="text-sm text-neutral-500 text-center">
-              © {new Date().getFullYear()} {userData.name}. 保留所有权利
-            </p>
-          </div>
-        </div>
-      </footer>
     </div>
   )
 }

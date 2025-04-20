@@ -22,7 +22,8 @@ export function generatePackageJson() {
     "lucide-react": "^0.287.0",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.0.0",
-    "tailwind-merge": "^1.14.0"
+    "tailwind-merge": "^1.14.0",
+    "framer-motion": "^11.18.2"
   },
   "devDependencies": {
     "@types/node": "^20.8.4",
@@ -436,9 +437,7 @@ export function ThemeToggle() {
 }`
 }
 
-// 更新用户数据文件生成器，确保包含新的社交媒体字段
 export function generateUserDataFile(userData: any, templateType: string) {
-  // Ensure userData is properly formatted with default values for missing fields
   const formattedUserData = {
     name: userData.name || "Your Name",
     email: userData.email || "your.email@example.com",
@@ -448,7 +447,13 @@ export function generateUserDataFile(userData: any, templateType: string) {
     location: userData.location || "",
     bio: userData.bio || "Your bio goes here...",
     avatar: userData.avatar || "",
-    projects: Array.isArray(userData.projects) ? userData.projects : [],
+    projects: Array.isArray(userData.projects) ? userData.projects.map(project => ({
+      title: project.title || "",
+      description: project.description || "",
+      imageUrl: project.imageUrl || "",
+      link: project.link || "",
+      date: project.date || new Date().toISOString()
+    })) : [],
     socialLinks: {
       wechat: userData.socialLinks?.wechat || "",
       weibo: userData.socialLinks?.weibo || "",

@@ -3,10 +3,10 @@
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
-import { MinimalistPreview } from "@/components/previews/minimalist-preview"
-import { BusinessPreview } from "@/components/previews/business-preview"
-import { CreativePreview } from "@/components/previews/creative-preview"
-import { FunPreview } from "@/components/previews/fun-preview"
+import MinimalistTemplate from "@/components/previews/MinimalTemplate"
+import BusinessTemplate from "@/components/previews/BusinessTemplate"
+import CreativeTemplate from "@/components/previews/CreativeTemplate"
+import FunTemplate from "@/components/previews/FunTemplate"
 import { Loader2 } from "lucide-react"
 import type { UserData, TemplateType } from "@/types/user-data"
 
@@ -26,15 +26,15 @@ export function ProjectPreview({ userData, templateType, onGenerate, onPrev, isG
   const renderTemplatePreview = () => {
     switch (templateType) {
       case "minimalist":
-        return <MinimalistPreview userData={userData} />
+        return <MinimalistTemplate userData={userData} />
       case "business":
-        return <BusinessPreview userData={userData} />
+        return <BusinessTemplate userData={userData} />
       case "creative":
-        return <CreativePreview userData={userData} />
+        return <CreativeTemplate userData={userData} />
       case "fun":
-        return <FunPreview userData={userData} />
+        return <FunTemplate userData={userData} />
       default:
-        return <MinimalistPreview userData={userData} />
+        return <MinimalistTemplate userData={userData} />
     }
   }
 
