@@ -10,22 +10,14 @@ interface CreativeTemplateProps {
 
 export default function CreativeTemplate({ userData }: CreativeTemplateProps) {
   const socialPlatformNames: Record<string, string> = {
-    github: 'GitHub',
-    twitter: '推特',
-    facebook: '脸书',
-    instagram: '照片墙',
-    behance: 'Behance',
-    dribbble: 'Dribbble',
-    youtube: '油管',
-    weibo: '微博',
     wechat: '微信公众号',
+    weibo: '微博',
     bilibili: '哔哩哔哩',
-    jike: '即刻',
     zhihu: '知乎',
-    douban: '豆瓣',
-    codepen: 'CodePen',
     douyin: '抖音',
     xiaohongshu: '小红书',
+    jike: '即刻',
+    douban: '豆瓣'
   }
 
   return (

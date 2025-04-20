@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server"
-import type { UserData, TemplateType } from "@/types/user-data"
+import type { UserData, TemplateType, SocialLinks } from "@/types/user-data"
 
 export async function POST(req: Request) {
   try {
@@ -14,7 +14,12 @@ export async function POST(req: Request) {
     }
 
     // Sanitize user data to prevent XSS and other injection attacks
-    const sanitizedUserData = {
+    const sanitizedSocialLinks: SocialLinks = Object.keys(userData.socialLinks).reduce((acc, key) => {
+      acc[key as keyof SocialLinks] = sanitizeString(userData.socialLinks[key as keyof SocialLinks])
+      return acc
+    }, {} as Record<keyof SocialLinks, string>)
+
+    const sanitizedUserData: UserData = {
       name: sanitizeString(userData.name),
       email: sanitizeString(userData.email),
       phone: sanitizeString(userData.phone),
@@ -29,13 +34,7 @@ export async function POST(req: Request) {
         imageUrl: project.imageUrl || "",
         link: sanitizeString(project.link),
       })),
-      socialLinks: {
-        wechat: sanitizeString(userData.socialLinks.wechat),
-        weibo: sanitizeString(userData.socialLinks.weibo),
-        github: sanitizeString(userData.socialLinks.github),
-        linkedin: sanitizeString(userData.socialLinks.linkedin),
-        twitter: sanitizeString(userData.socialLinks.twitter),
-      },
+      socialLinks: sanitizedSocialLinks,
     }
 
     // Generate a unique session ID for this download

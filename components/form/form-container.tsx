@@ -30,36 +30,7 @@ const initialUserData: UserData = {
     xiaohongshu: "",
     jike: "",
     douban: "",
-    red: "",
-    maimai: "",
-    huaban: "",
-    
-    // 国际社交媒体
-    github: "",
-    twitter: "",
-    facebook: "",
-    instagram: "",
-    linkedin: "",
-    telegram: "",
-    discord: "",
-    reddit: "",
-    
-    // 设计社区
-    behance: "",
-    dribbble: "",
-    codepen: "",
-    figma: "",
-    artstation: "",
-    
-    // 视频平台
-    youtube: "",
-    vimeo: "",
-    
-    // 开发者社区
-    stackoverflow: "",
-    medium: "",
-    devto: "",
-    hashnode: ""
+
   }
 }
 

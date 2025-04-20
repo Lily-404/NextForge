@@ -14,43 +14,33 @@ export function SocialLinks({ socialLinks, variant = "business" }: SocialLinksPr
       : "bg-purple-100 hover:bg-purple-200 text-purple-800"
   )
 
+  const socialLinkEntries = Object.entries(socialLinks).filter(([, value]) => value)
+
+  const socialLabels: Record<keyof SocialLinksType, string> = {
+    wechat: "WeChat",
+    weibo: "Weibo",
+    bilibili: "Bilibili",
+    zhihu: "Zhihu",
+    douyin: "Douyin",
+    xiaohongshu: "Xiaohongshu",
+    jike: "Jike",
+    douban: "Douban",
+    email: "Email", // Assuming email might be treated as a social link
+    phone: "Phone", // Assuming phone might be treated as a social link
+  }
+
   return (
     <div className="flex flex-wrap gap-3">
-      {socialLinks.wechat && (
-        <a href={socialLinks.wechat} className={linkStyle} target="_blank" rel="noopener noreferrer">
-          WeChat
-        </a>
-      )}
-      {socialLinks.weibo && (
-        <a href={socialLinks.weibo} className={linkStyle} target="_blank" rel="noopener noreferrer">
-          Weibo
-        </a>
-      )}
-      {socialLinks.github && (
-        <a href={socialLinks.github} className={linkStyle} target="_blank" rel="noopener noreferrer">
-          GitHub
-        </a>
-      )}
-      {socialLinks.jike && (
-        <a href={socialLinks.jike} className={linkStyle} target="_blank" rel="noopener noreferrer">
-          Jike
-        </a>
-      )}
-      {socialLinks.xiaohongshu && (
-        <a href={socialLinks.xiaohongshu} className={linkStyle} target="_blank" rel="noopener noreferrer">
-          Xiaohongshu
-        </a>
-      )}
-      {socialLinks.douyin && (
-        <a href={socialLinks.douyin} className={linkStyle} target="_blank" rel="noopener noreferrer">
-          Douyin
-        </a>
-      )}
-      {socialLinks.bilibili && (
-        <a href={socialLinks.bilibili} className={linkStyle} target="_blank" rel="noopener noreferrer">
-          Bilibili
-        </a>
-      )}
+      {socialLinkEntries.map(([key, value]) => {
+        const label = socialLabels[key as keyof SocialLinksType] || key
+        // Exclude email and phone from being rendered as social links here if needed
+        if (key === 'email' || key === 'phone') return null;
+        return (
+          <a key={key} href={value} className={linkStyle} target="_blank" rel="noopener noreferrer">
+            {label}
+          </a>
+        )
+      })}
     </div>
   )
 }
