@@ -183,7 +183,7 @@ export function FunProjectsSection() {
         <div className="max-w-4xl mx-auto">
           <h2 className="text-3xl font-bold mb-12 text-center">
             <span className="inline-block mr-2">🚀</span>
-            My Awesome Projects
+            我的项目作品
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {userData.projects.map((project, index) => (
@@ -204,7 +204,7 @@ export function FunProjectsSection() {
                   </div>
                 ) : (
                   <div className="aspect-video bg-muted flex items-center justify-center">
-                    <span className="text-muted-foreground">No image</span>
+                    <span className="text-muted-foreground">暂无图片</span>
                   </div>
                 )}
                 <div className="p-6">
@@ -217,7 +217,7 @@ export function FunProjectsSection() {
                       rel="noopener noreferrer"
                       className="inline-flex items-center px-4 py-2 bg-primary text-primary-foreground rounded-full hover:bg-primary/90 transition-all transform hover:scale-105"
                     >
-                      Check it out 👀
+                      查看详情 👀
                     </a>
                   )}
                 </div>
@@ -228,11 +228,9 @@ export function FunProjectsSection() {
       </div>
     </section>
   )
-}
-`
+}`
 }
 
-// Generate contact section component
 function generateFunContactSection() {
   return `import userData from "@/data/user-data"
 
@@ -243,12 +241,12 @@ export function FunContactSection() {
         <div className="max-w-4xl mx-auto text-center">
           <h2 className="text-3xl font-bold mb-6">
             <span className="inline-block mr-2">📬</span>
-            Contact Me
+            联系我
           </h2>
-          <p className="text-foreground/80 mb-12 max-w-2xl mx-auto">Want to chat, collaborate, or just say hi? Reach out anytime!</p>
+          <p className="text-foreground/80 mb-12 max-w-2xl mx-auto">想聊聊天、合作或者打个招呼？随时欢迎联系我！</p>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 text-left max-w-2xl mx-auto">
             <div className="bg-card p-6 rounded-xl border border-border shadow-md transform rotate-1 hover:rotate-0 transition-transform duration-300">
-              <h3 className="text-xl font-bold mb-4">Contact Info 📞</h3>
+              <h3 className="text-xl font-bold mb-4">联系方式 📞</h3>
               <ul className="space-y-4">
                 {userData.email && (
                   <li className="flex items-center">
@@ -276,7 +274,7 @@ export function FunContactSection() {
             </div>
 
             <div className="bg-card p-6 rounded-xl border border-border shadow-md transform -rotate-1 hover:rotate-0 transition-transform duration-300">
-              <h3 className="text-xl font-bold mb-4">Social Media 🌐</h3>
+              <h3 className="text-xl font-bold mb-4">社交媒体 🌐</h3>
               <div className="flex flex-wrap gap-3">
                 {userData.socialLinks?.wechat && (
                   <a
@@ -285,7 +283,7 @@ export function FunContactSection() {
                     rel="noopener noreferrer"
                     className="px-4 py-2 bg-primary/10 rounded-full text-foreground hover:bg-primary/20 transition-colors"
                   >
-                    WeChat
+                    微信
                   </a>
                 )}
                 {userData.socialLinks?.weibo && (
@@ -295,7 +293,7 @@ export function FunContactSection() {
                     rel="noopener noreferrer"
                     className="px-4 py-2 bg-destructive/10 rounded-full text-foreground hover:bg-destructive/20 transition-colors"
                   >
-                    Weibo
+                    微博
                   </a>
                 )}
                 {userData.socialLinks?.github && (
@@ -315,7 +313,7 @@ export function FunContactSection() {
                     rel="noopener noreferrer"
                     className="px-4 py-2 bg-primary/10 rounded-full text-foreground hover:bg-primary/20 transition-colors"
                   >
-                    LinkedIn
+                    领英
                   </a>
                 )}
                 {userData.socialLinks?.twitter && (
@@ -325,7 +323,7 @@ export function FunContactSection() {
                     rel="noopener noreferrer"
                     className="px-4 py-2 bg-primary/10 rounded-full text-foreground hover:bg-primary/20 transition-colors"
                   >
-                    Twitter
+                    推特
                   </a>
                 )}
               </div>
