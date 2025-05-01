@@ -20,6 +20,9 @@ const userData: UserData = {
     xiaohongshu: "",
     jike: "",
     douban: "",
+    linkedin: undefined,
+    twitter: undefined,
+    github: undefined
   }
 }
 

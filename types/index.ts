@@ -7,6 +7,9 @@ interface Project {
 }
 
 export interface SocialLinks {
+  linkedin: string | undefined
+  twitter: string | undefined
+  github: any
   // 国内平台
   wechat?: string
   weibo?: string

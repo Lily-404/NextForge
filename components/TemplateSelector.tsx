@@ -1,6 +1,7 @@
 "use client"
 
-import type { TemplateType } from "@/types"
+// 定义模板类型
+type TemplateType = "minimal" | "business" | "creative" | "fun"
 import Image from "next/image"
 import { Check } from "lucide-react"
 

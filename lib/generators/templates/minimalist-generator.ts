@@ -2,7 +2,7 @@ import type JSZip from "jszip"
 
 export function generateMinimalTemplate(zip: JSZip, userData: any) {
   // 创建模板目录结构
-  const templatesDir = zip.folder("components/templates/minimal")
+  const templatesDir = zip.folder("components/templates/minimalist")
 
   // 添加组件文件
   templatesDir.file("template.tsx", generateMinimalTemplateComponent())
@@ -12,36 +12,115 @@ export function generateMinimalTemplate(zip: JSZip, userData: any) {
   templatesDir.file("works-section.tsx", generateMinimalWorksSection())
   templatesDir.file("contact-section.tsx", generateMinimalContactSection())
   templatesDir.file("footer.tsx", generateMinimalFooter())
+
+  // 添加工具文件
+  templatesDir.file("utils.ts", generateMinimalUtils())
+  templatesDir.file("types.ts", generateMinimalTypes())
+
+  // 添加页面文件
+  zip.file("app/page.tsx", `import { MinimalTemplate } from "@/components/templates/minimalist/template"
+  import userData from "@/data/user-data"
+  
+  export default function Home() {
+    return <MinimalTemplate userData={userData} />
+  }`)
+}
+
+// Generate types file
+function generateMinimalTypes() {
+  return `interface Project {
+  title: string
+  description: string
+  imageUrl: string
+  link: string
+  date: string
+}
+
+interface SocialLinks {
+  wechat?: string
+  weibo?: string
+  github?: string
+  linkedin?: string
+  twitter?: string
+}
+
+export interface UserData {
+  name: string
+  email: string
+  phone: string
+  wechat: string
+  profession: string
+  location: string
+  bio: string
+  avatar: string
+  projects: Project[]
+  socialLinks: SocialLinks
+}`
+}
+
+// Generate utils file
+function generateMinimalUtils() {
+  return `/**
+ * Get a fallback character for avatar when no image is provided
+ */
+export function getImageFallback(name: string): string {
+  if (!name) return "?"
+  return name.charAt(0).toUpperCase()
+}
+
+/**
+ * Format a date to a readable string
+ */
+export function formatDate(date: Date): string {
+  return new Intl.DateTimeFormat('en-US', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric'
+  }).format(date)
+}`
 }
 
 function generateMinimalTemplateComponent() {
-  return `import { MinimalHeader } from './header'
+  return `'use client'
+import type { UserData } from "@/types/user-data"
+import { MinimalHeader } from './header'
 import { MinimalHeroSection } from './hero-section'
 import { MinimalAboutSection } from './about-section'
 import { MinimalWorksSection } from './works-section'
 import { MinimalContactSection } from './contact-section'
 import { MinimalFooter } from './footer'
 
-export function MinimalTemplate() {
+interface Props {
+  userData: UserData
+}
+
+export function MinimalTemplate({ userData }: Props) {
+  if (!userData) return null
+
   return (
     <div className="min-h-screen bg-white font-sans antialiased">
-      <MinimalHeader />
+      <MinimalHeader userData={userData} />
       <main className="pt-16">
-        <MinimalHeroSection />
-        <MinimalAboutSection />
-        <MinimalWorksSection />
-        <MinimalContactSection />
+        <MinimalHeroSection userData={userData} />
+        <MinimalAboutSection userData={userData} />
+        <MinimalWorksSection userData={userData} />
+        <MinimalContactSection userData={userData} />
       </main>
-      <MinimalFooter />
+      <MinimalFooter userData={userData} />
     </div>
   )
 }`
 }
 
 function generateMinimalHeader() {
-  return `import userData from "@/data/user-data"
+  return `'use client'
+import type { UserData } from "@/types/user-data"
 
-export function MinimalHeader() {
+interface Props {
+  userData: UserData
+}
+
+export function MinimalHeader({ userData }: Props) {
   return (
     <nav className="fixed top-0 left-0 right-0 bg-white/80 backdrop-blur-sm z-10 border-b border-gray-100">
       <div className="max-w-screen-sm mx-auto px-6 h-16 flex items-center justify-between">
@@ -58,10 +137,15 @@ export function MinimalHeader() {
 }
 
 function generateMinimalHeroSection() {
-  return `import Image from "next/image"
-import userData from "@/data/user-data"
+  return `'use client'
+import Image from "next/image"
+import type { UserData } from "@/types/user-data"
 
-export function MinimalHeroSection() {
+interface Props {
+  userData: UserData
+}
+
+export function MinimalHeroSection({ userData }: Props) {
   return (
     <section className="py-24">
       <div className="max-w-screen-sm mx-auto px-6">
@@ -72,10 +156,10 @@ export function MinimalHeroSection() {
                 src={userData.avatar}
                 alt={userData.name}
                 fill
-                className="object-cover"
+                className="object-cover rounded-full"
               />
             ) : (
-              <div className="w-24 h-24 bg-gray-50 flex items-center justify-center">
+              <div className="w-24 h-24 bg-gray-50 rounded-full flex items-center justify-center">
                 <span className="text-2xl text-gray-400">{userData.name.charAt(0)}</span>
               </div>
             )}
@@ -92,9 +176,14 @@ export function MinimalHeroSection() {
 }
 
 function generateMinimalAboutSection() {
-  return `import userData from "@/data/user-data"
+  return `'use client'
+import type { UserData } from "@/types/user-data"
 
-export function MinimalAboutSection() {
+interface Props {
+  userData: UserData
+}
+
+export function MinimalAboutSection({ userData }: Props) {
   return (
     <section id="about" className="py-24 border-t border-gray-100">
       <div className="max-w-screen-sm mx-auto px-6">
@@ -109,10 +198,15 @@ export function MinimalAboutSection() {
 }
 
 function generateMinimalWorksSection() {
-  return `import Image from "next/image"
-import userData from "@/data/user-data"
+  return `'use client'
+import Image from "next/image"
+import type { UserData } from "@/types/user-data"
 
-export function MinimalWorksSection() {
+interface Props {
+  userData: UserData
+}
+
+export function MinimalWorksSection({ userData }: Props) {
   if (!userData.projects?.length || !userData.projects[0].title) return null
 
   return (
@@ -156,9 +250,14 @@ export function MinimalWorksSection() {
 }
 
 function generateMinimalContactSection() {
-  return `import userData from "@/data/user-data"
+  return `'use client'
+import type { UserData } from "@/types/user-data"
 
-export function MinimalContactSection() {
+interface Props {
+  userData: UserData
+}
+
+export function MinimalContactSection({ userData }: Props) {
   return (
     <section id="contact" className="py-24 border-t border-gray-100">
       <div className="max-w-screen-sm mx-auto px-6">
@@ -205,9 +304,14 @@ export function MinimalContactSection() {
 }
 
 function generateMinimalFooter() {
-  return `import userData from "@/data/user-data"
+  return `'use client'
+import type { UserData } from "@/types/user-data"
 
-export function MinimalFooter() {
+interface Props {
+  userData: UserData
+}
+
+export function MinimalFooter({ userData }: Props) {
   return (
     <footer className="py-12 border-t border-gray-100">
       <div className="max-w-screen-sm mx-auto px-6">

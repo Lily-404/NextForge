@@ -178,7 +178,7 @@ export default function CreativeTemplate({ userData }: CreativeTemplateProps) {
           </motion.div>
         </section>
 
-        {userData.projects?.length > 0 && userData.projects[0]?.title && (
+        {userData.projects && userData.projects.length > 0 && userData.projects[0]?.title && (
           <section id="works" className="py-32 bg-neutral-100">
             <div className="container mx-auto px-8">
               <div className="max-w-4xl mx-auto">

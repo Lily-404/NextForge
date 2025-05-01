@@ -14,7 +14,7 @@ import {
   generateThemeToggle,
   generateUserDataFile,
 } from "@/lib/generators/config-generators"
-import { generateMinimalistTemplate } from "@/lib/generators/templates/minimalist-generator"
+import { generateMinimalTemplate } from "@/lib/generators/templates/minimalist-generator"
 import { generateBusinessTemplate } from "@/lib/generators/templates/business-generator"
 import { generateCreativeTemplate } from "@/lib/generators/templates/creative-generator"
 import { generateFunTemplate } from "@/lib/generators/templates/fun-generator"
@@ -111,7 +111,7 @@ export async function GET(req: Request) {
     // Add the selected template components
     switch (templateType) {
       case "minimalist":
-        generateMinimalistTemplate(zip, userData)
+        generateMinimalTemplate(zip, userData)
         break
       case "business":
         generateBusinessTemplate(zip, userData)
@@ -123,7 +123,7 @@ export async function GET(req: Request) {
         generateFunTemplate(zip, userData)
         break
       default:
-        generateMinimalistTemplate(zip, userData)
+        generateMinimalTemplate(zip, userData)
     }
 
     // Generate the zip file

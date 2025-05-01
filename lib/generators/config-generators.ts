@@ -447,7 +447,7 @@ export function generateUserDataFile(userData: any, templateType: string) {
     location: userData.location || "",
     bio: userData.bio || "Your bio goes here...",
     avatar: userData.avatar || "",
-    projects: Array.isArray(userData.projects) ? userData.projects.map(project => ({
+    projects: Array.isArray(userData.projects) ? userData.projects.map((project: { title: any; description: any; imageUrl: any; link: any; date: any }) => ({
       title: project.title || "",
       description: project.description || "",
       imageUrl: project.imageUrl || "",

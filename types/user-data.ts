@@ -39,6 +39,7 @@ export interface UserData {
     link?: string
   }>
   socialLinks: {
+    linkedin: string | undefined
     wechat?: string
     weibo?: string
     bilibili?: string

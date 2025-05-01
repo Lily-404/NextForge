@@ -30,8 +30,9 @@ const initialUserData: UserData = {
     xiaohongshu: "",
     jike: "",
     douban: "",
-
-  }
+    linkedin: undefined
+  },
+  template: ""
 }
 
 export default function FormContainer() {
