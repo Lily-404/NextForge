@@ -1,190 +1,224 @@
 import type { UserData } from "@/types"
 import Image from "next/image"
+import { Suspense, lazy } from "react"
+import { ErrorBoundary } from "@/components/ErrorBoundary"
+import { Loading } from "@/components/ui/Loading"
+import { useTheme } from "@/components/theme-provider"
+import { cn } from "@/lib/utils"
+
+// 懒加载组件
+const ProjectCard = lazy(() => import("@/components/business/ProjectCard"))
+const ContactCard = lazy(() => import("@/components/business/ContactCard"))
+const SocialLinks = lazy(() => import("@/components/business/SocialLinks"))
 
 export default function BusinessTemplate({ userData }: { userData: UserData }) {
+  const { theme } = useTheme()
+  const isDark = theme === "dark"
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-white font-sans">
-      {/* 顶部导航 */}
-      <nav className="bg-white border-b border-gray-200 sticky top-0 z-10">
-        <div className="max-w-6xl mx-auto px-4">
-          <div className="flex justify-between items-center h-16">
-            <div className="font-bold text-xl text-gray-900">{userData.name || "您的姓名"}</div>
-            <div className="flex space-x-8">
-              <a href="#about" className="text-gray-600 hover:text-blue-600 transition-colors">
-                关于
-              </a>
-              <a href="#projects" className="text-gray-600 hover:text-blue-600 transition-colors">
-                项目
-              </a>
-              <a href="#contact" className="text-gray-600 hover:text-blue-600 transition-colors">
-                联系
-              </a>
-            </div>
-          </div>
-        </div>
-      </nav>
-
-      {/* 主要内容区 */}
-      <main>
-        {/* Hero区域 */}
-        <section className="py-20 bg-gradient-to-br from-blue-50 to-indigo-50">
-          <div className="max-w-6xl mx-auto px-4">
-            <div className="flex flex-col md:flex-row items-center gap-12">
-              <div className="w-48 h-48 relative flex-shrink-0">
-                {userData.avatar ? (
-                  <Image
-                    src={userData.avatar}
-                    alt={userData.name}
-                    fill
-                    className="rounded-full object-cover border-4 border-white shadow-lg"
-                  />
-                ) : (
-                  <div className="w-48 h-48 rounded-full bg-gradient-to-br from-blue-100 to-indigo-100 flex items-center justify-center border-4 border-white shadow-lg">
-                    <span className="text-4xl text-blue-600">{userData.name ? userData.name.charAt(0) : "?"}</span>
-                  </div>
-                )}
+    <ErrorBoundary>
+      <div className={cn(
+        "min-h-screen font-sans",
+        isDark ? "bg-[#111111]" : "bg-[#fafafa]"
+      )}>
+        {/* 顶部导航 */}
+        <nav className={cn(
+          "sticky top-0 z-10 border-b",
+          isDark ? "bg-[#111111] border-[#222222]" : "bg-[#fafafa] border-[#eaeaea]"
+        )}>
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="flex justify-between items-center h-20">
+              <div className={cn(
+                "font-bold text-2xl tracking-tight",
+                isDark ? "text-[#e5e5e5]" : "text-[#1a1a1a]"
+              )}>
+                {userData.name || "您的姓名"}
               </div>
-              <div className="text-center md:text-left">
-                <h1 className="text-4xl font-bold text-gray-900 mb-4">{userData.name || "您的姓名"}</h1>
-                <p className="text-xl text-gray-600 mb-6">{userData.profession || "您的职业"}</p>
-                <div className="flex flex-wrap gap-4 justify-center md:justify-start">
-                  {userData.email && (
-                    <a
-                      href={`mailto:${userData.email}`}
-                      className="inline-flex items-center px-6 py-3 bg-blue-600 text-white rounded-full hover:bg-blue-700 transition-colors"
-                    >
-                      联系我
-                    </a>
-                  )}
-                  {userData.socialLinks?.linkedin && (
-                    <a
-                      href={userData.socialLinks.linkedin}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center px-6 py-3 bg-white text-blue-600 rounded-full hover:bg-blue-50 transition-colors border border-blue-200"
-                    >
-                      查看领英
-                    </a>
-                  )}
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* 关于我 */}
-        <section id="about" className="py-20">
-          <div className="max-w-6xl mx-auto px-4">
-            <h2 className="text-3xl font-bold text-gray-900 mb-12 text-center">关于我</h2>
-            <div className="bg-white rounded-2xl shadow-lg p-8 border border-gray-100">
-              <p className="text-gray-600 leading-relaxed text-lg">{userData.bio || "这里将显示您的个人简介..."}</p>
-            </div>
-          </div>
-        </section>
-
-        {/* 项目展示 */}
-        {userData.projects && userData.projects.length > 0 && userData.projects[0].title && (
-          <section id="projects" className="py-20 bg-gray-50">
-            <div className="max-w-6xl mx-auto px-4">
-              <h2 className="text-3xl font-bold text-gray-900 mb-12 text-center">项目展示</h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                {userData.projects.map((project, index) => (
-                  <div
-                    key={index}
-                    className="bg-white rounded-2xl shadow-lg overflow-hidden border border-gray-100 hover:shadow-xl transition-shadow"
-                  >
-                    {project.imageUrl && (
-                      <div className="aspect-video relative">
-                        <Image
-                          src={project.imageUrl}
-                          alt={project.title}
-                          fill
-                          className="object-cover"
-                        />
-                      </div>
+              <div className="flex space-x-12">
+                {["about", "projects", "contact"].map((section) => (
+                  <a
+                    key={section}
+                    href={`#${section}`}
+                    className={cn(
+                      "text-sm font-medium uppercase tracking-wider transition-colors",
+                      isDark ? "text-[#666666] hover:text-[#e5e5e5]" : "text-[#666666] hover:text-[#1a1a1a]"
                     )}
-                    <div className="p-8">
-                      <h3 className="text-2xl font-bold text-gray-900 mb-4">{project.title}</h3>
-                      {project.description && (
-                        <p className="text-gray-600 mb-6">{project.description}</p>
-                      )}
-                      {project.link && (
-                        <a
-                          href={project.link}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="inline-flex items-center px-6 py-3 bg-blue-600 text-white rounded-full hover:bg-blue-700 transition-colors"
-                        >
-                          了解更多
-                        </a>
-                      )}
-                    </div>
-                  </div>
+                  >
+                    {section.charAt(0).toUpperCase() + section.slice(1)}
+                  </a>
                 ))}
               </div>
             </div>
-          </section>
-        )}
+          </div>
+        </nav>
 
-        {/* 联系方式 */}
-        <section id="contact" className="py-20">
-          <div className="max-w-6xl mx-auto px-4">
-            <h2 className="text-3xl font-bold text-gray-900 mb-12 text-center">联系方式</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              <div className="bg-white rounded-2xl shadow-lg p-8 border border-gray-100">
-                <h3 className="text-xl font-semibold text-gray-900 mb-6">直接联系</h3>
-                <div className="space-y-4">
-                  {userData.email && (
-                    <a href={`mailto:${userData.email}`} className="flex items-center text-gray-600 hover:text-blue-600">
-                      <span className="mr-3">✉️</span>
-                      {userData.email}
-                    </a>
-                  )}
-                  {userData.phone && (
-                    <a href={`tel:${userData.phone}`} className="flex items-center text-gray-600 hover:text-blue-600">
-                      <span className="mr-3">📱</span>
-                      {userData.phone}
-                    </a>
-                  )}
-                  {userData.wechat && (
-                    <div className="flex items-center text-gray-600">
-                      <span className="mr-3">💬</span>
-                      {userData.wechat}
+        {/* 主要内容区 */}
+        <main>
+          {/* Hero区域 */}
+          <section className={cn(
+            "py-32",
+            isDark ? "bg-[#111111]" : "bg-[#fafafa]"
+          )}>
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+              <div className="flex flex-col md:flex-row items-center gap-16">
+                <div className="w-64 h-64 relative flex-shrink-0">
+                  {userData.avatar ? (
+                    <Image
+                      src={userData.avatar}
+                      alt={userData.name}
+                      fill
+                      className="object-cover border"
+                      style={{ borderColor: isDark ? "#222222" : "#eaeaea" }}
+                      loading="eager"
+                      priority
+                    />
+                  ) : (
+                    <div className={cn(
+                      "w-64 h-64 flex items-center justify-center border",
+                      isDark ? "bg-[#1a1a1a] border-[#222222]" : "bg-[#f5f5f5] border-[#eaeaea]"
+                    )}>
+                      <span className={cn(
+                        "text-6xl font-light",
+                        isDark ? "text-[#e5e5e5]" : "text-[#1a1a1a]"
+                      )}>
+                        {userData.name ? userData.name.charAt(0) : "?"}
+                      </span>
                     </div>
                   )}
                 </div>
-              </div>
-              <div className="bg-white rounded-2xl shadow-lg p-8 border border-gray-100">
-                <h3 className="text-xl font-semibold text-gray-900 mb-6">社交媒体</h3>
-                <div className="flex flex-wrap gap-4">
-                  {Object.entries(userData.socialLinks || {}).map(([platform, link]) => (
-                    link && (
+                <div className="text-center md:text-left flex-1">
+                  <h1 className={cn(
+                    "text-5xl font-bold mb-6 tracking-tight",
+                    isDark ? "text-[#e5e5e5]" : "text-[#1a1a1a]"
+                  )}>
+                    {userData.name || "您的姓名"}
+                  </h1>
+                  <p className={cn(
+                    "text-xl mb-8",
+                    isDark ? "text-[#666666]" : "text-[#666666]"
+                  )}>
+                    {userData.profession || "您的职业"}
+                  </p>
+                  <div className="flex flex-wrap gap-4 justify-center md:justify-start">
+                    {userData.email && (
                       <a
-                        key={platform}
-                        href={link}
+                        href={`mailto:${userData.email}`}
+                        className={cn(
+                          "inline-flex items-center px-8 py-3 border transition-colors",
+                          isDark 
+                            ? "border-[#333333] text-[#e5e5e5] hover:border-[#e5e5e5]" 
+                            : "border-[#1a1a1a] text-[#1a1a1a] hover:bg-[#1a1a1a] hover:text-[#fafafa]"
+                        )}
+                      >
+                        <span className="text-sm font-medium tracking-wider">联系我</span>
+                      </a>
+                    )}
+                    {userData.socialLinks?.linkedin && (
+                      <a
+                        href={userData.socialLinks.linkedin}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="px-6 py-3 bg-gray-50 text-gray-700 rounded-full hover:bg-gray-100 transition-colors"
+                        className={cn(
+                          "inline-flex items-center px-8 py-3 border transition-colors",
+                          isDark 
+                            ? "border-[#333333] text-[#666666] hover:border-[#e5e5e5] hover:text-[#e5e5e5]" 
+                            : "border-[#eaeaea] text-[#666666] hover:border-[#1a1a1a] hover:text-[#1a1a1a]"
+                        )}
                       >
-                        {platform.charAt(0).toUpperCase() + platform.slice(1)}
+                        <span className="text-sm font-medium tracking-wider">查看领英</span>
                       </a>
-                    )
-                  ))}
+                    )}
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-        </section>
-      </main>
+          </section>
 
-      {/* 页脚 */}
-      <footer className="bg-gray-900 text-white py-12">
-        <div className="max-w-6xl mx-auto px-4 text-center">
-          <p className="text-gray-400">
-            © {new Date().getFullYear()} {userData.name || "您的姓名"}. 保留所有权利。
-          </p>
-        </div>
-      </footer>
-    </div>
+          {/* 关于我 */}
+          <section id="about" className="py-32">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+              <h2 className={cn(
+                "text-4xl font-bold mb-16 text-center tracking-tight",
+                isDark ? "text-[#e5e5e5]" : "text-[#1a1a1a]"
+              )}>
+                关于我
+              </h2>
+              <div className={cn(
+                "p-12 border",
+                isDark ? "border-[#222222] bg-[#1a1a1a]" : "border-[#eaeaea] bg-white"
+              )}>
+                <p className={cn(
+                  "leading-relaxed text-lg",
+                  isDark ? "text-[#666666]" : "text-[#666666]"
+                )}>
+                  {userData.bio || "这里将显示您的个人简介..."}
+                </p>
+              </div>
+            </div>
+          </section>
+
+          {/* 项目展示 */}
+          {userData.projects && userData.projects.length > 0 && userData.projects[0].title && (
+            <section id="projects" className={cn(
+              "py-32",
+              isDark ? "bg-[#1a1a1a]" : "bg-[#f5f5f5]"
+            )}>
+              <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <h2 className={cn(
+                  "text-4xl font-bold mb-16 text-center tracking-tight",
+                  isDark ? "text-[#e5e5e5]" : "text-[#1a1a1a]"
+                )}>
+                  项目展示
+                </h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                  <Suspense fallback={<Loading />}>
+                    {userData.projects.map((project, index) => (
+                      <ProjectCard
+                        key={index}
+                        project={project}
+                        isDark={isDark}
+                      />
+                    ))}
+                  </Suspense>
+                </div>
+              </div>
+            </section>
+          )}
+
+          {/* 联系方式 */}
+          <section id="contact" className="py-32">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+              <h2 className={cn(
+                "text-4xl font-bold mb-16 text-center tracking-tight",
+                isDark ? "text-[#e5e5e5]" : "text-[#1a1a1a]"
+              )}>
+                联系方式
+              </h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <Suspense fallback={<Loading />}>
+                  <ContactCard userData={userData} isDark={isDark} />
+                  <SocialLinks socialLinks={userData.socialLinks} isDark={isDark} />
+                </Suspense>
+              </div>
+            </div>
+          </section>
+        </main>
+
+        {/* 页脚 */}
+        <footer className={cn(
+          "py-16 border-t",
+          isDark ? "bg-[#111111] border-[#222222]" : "bg-[#fafafa] border-[#eaeaea]"
+        )}>
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <p className={cn(
+              "text-sm tracking-wider",
+              isDark ? "text-[#666666]" : "text-[#666666]"
+            )}>
+              © {new Date().getFullYear()} {userData.name || "您的姓名"}. 保留所有权利。
+            </p>
+          </div>
+        </footer>
+      </div>
+    </ErrorBoundary>
   )
 }
