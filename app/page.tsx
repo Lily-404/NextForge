@@ -146,7 +146,7 @@ export default function Home() {
               <div className="absolute -bottom-px left-11 right-20 h-px bg-gradient-to-r from-neutral-800/0 via-neutral-800 to-neutral-800/0" />
               <div className="p-4 bg-neutral-900 rounded-xl overflow-hidden">
                 <div className="grid grid-cols-2 gap-4">
-                  {["/preview-1.png", "/preview-2.png", "/preview-3.png", "/preview-4.png"].map((src, index) => (
+                  {["/33.jpg", "/22.jpg", "/11.jpg", "/44.jpg"].map((src, index) => (
                     <div key={index} className="relative aspect-[16/10] rounded-lg overflow-hidden bg-neutral-800">
                       <Image 
                         src={src} 

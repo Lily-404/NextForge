@@ -9,7 +9,11 @@ const inter = Inter({ subsets: ["latin"] })
 export const metadata: Metadata = {
   title: "Next.js 落地页生成器",
   description: "创建个性化的 Next.js 项目，展示您的个人信息和作品集",
-    generator: 'v0.dev'
+  icons: {
+    icon: '/icon.png',
+    shortcut: '/icon.png',
+    apple: '/icon.png',
+  }
 }
 
 export default function RootLayout({

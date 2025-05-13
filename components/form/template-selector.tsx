@@ -19,25 +19,25 @@ const templates = [
     id: "minimalist" as TemplateType,
     name: "简约风格",
     description: "干净、简洁的设计，突出内容本身",
-    imageUrl: "/placeholder.svg?height=200&width=300",
+    imageUrl: "/22.jpg",
   },
   {
     id: "business" as TemplateType,
     name: "商业风格",
     description: "专业、正式的设计，适合职场人士",
-    imageUrl: "/placeholder.svg?height=200&width=300",
+    imageUrl: "/33.jpg",
   },
   {
     id: "creative" as TemplateType,
     name: "创意风格",
     description: "独特、富有创意的设计，展现个性",
-    imageUrl: "/placeholder.svg?height=200&width=300",
+    imageUrl: "/11.jpg",
   },
   {
     id: "fun" as TemplateType,
     name: "有趣风格",
     description: "活泼、生动的设计，充满趣味性",
-    imageUrl: "/placeholder.svg?height=200&width=300",
+    imageUrl: "/44.jpg",
   },
 ]
 
